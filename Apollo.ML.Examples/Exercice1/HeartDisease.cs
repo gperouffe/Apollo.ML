@@ -15,7 +15,7 @@ namespace Apollo.ML.Examples.Exercice1
 
             var trainingSetPath = Path.Combine(".", "Data", "heart-disease-train.csv");
             var testingSetPath = Path.Combine(".", "Data", "heart-disease-test.csv");
-            var modelPath = Path.Combine(".", "taxi-fare-model.zip");
+            var modelPath = Path.Combine(".", "heart-disease-model.zip");
             BuildTrainAndSave(mlContext, trainingSetPath, testingSetPath, modelPath);
 
             TestPrediction(mlContext, modelPath);
@@ -23,27 +23,13 @@ namespace Apollo.ML.Examples.Exercice1
 
         private static void BuildTrainAndSave(MLContext mlContext, string trainingSetPath, string testingSetPath, string modelPath)
         {
-            var trainingDataView = mlContext.Data.LoadFromTextFile<HeartDataInput>(trainingSetPath, separatorChar: ';');
-            var testDataView = mlContext.Data.LoadFromTextFile<HeartDataInput>(testingSetPath, separatorChar: ';');
-
-            var pipeline = mlContext.Transforms.Concatenate("Features", "Age", "Sex", "Cp", "TrestBps", "Chol", "Fbs", "RestEcg", "Thalac", "Exang", "OldPeak", "Slope", "Ca", "Thal")
-                .Append(mlContext.BinaryClassification.Trainers.FastTree(labelColumnName: "Label", featureColumnName: "Features"));
-
-            ITransformer trainedModel = pipeline.Fit(trainingDataView);
-
-            var predictions = trainedModel.Transform(testDataView);
-
-            var metrics = mlContext.BinaryClassification.Evaluate(data: predictions, labelColumnName: "Label", scoreColumnName: "Score");
-
-            ConsoleHelper.PrintBinaryClassificationMetrics("FastTree", metrics);
-
-            mlContext.Model.Save(trainedModel, trainingDataView.Schema, modelPath);
+            throw new NotImplementedException();
         }
 
         private static void TestPrediction(MLContext mlContext, string modelPath)
         {
             ITransformer trainedModel = mlContext.Model.Load(modelPath, out var modelInputSchema);
-
+            
             // Create prediction engine related to the loaded trained model
             var predictionEngine = mlContext.Model.CreatePredictionEngine<HeartDataInput, HeartPrediction>(trainedModel);
 
